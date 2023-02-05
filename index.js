@@ -1,10 +1,53 @@
 const inquirer = require("inquirer")
 const fs = require('fs');
+const newArr = ["exit"]
 function fetchCall (choice) {
     fetch(`http://localhost:3001/api/${choice}`, {method: 'GET'})
     .then(res => res.json())
     .then(data => {
-        console.log(data)
+        
+        
+        if (choice == "departments") {
+             data.map(info => {
+            return newArr.push(info.name)
+            })
+            
+            inquirer.prompt([
+                {   type:"list",
+                    message: "Here are your departments:",
+                    choices: newArr,
+                    name:"startChoice"
+                }
+            ])
+        
+        } else if (choice == "employees") {
+            data.map(info => {
+           return newArr.push(info.first_name + " " + info.last_name)
+           })
+           
+           inquirer.prompt([
+               {   type:"list",
+                   message: "Here are your employees:",
+                   choices: newArr,
+                   name:"startChoice"
+               }
+           ])
+       
+       } else {
+        data.map(info => {
+            return newArr.push(info.title)
+            })
+            
+            inquirer.prompt([
+                {   type:"list",
+                    message: "Here are your roles:",
+                    choices: newArr,
+                    name:"startChoice"
+                }
+            ])
+        }
+        
+        return newArr
     }).catch( err => {
         console.log(err)
     })
@@ -16,6 +59,7 @@ function fetchPost (choice, vari) {
     .then(res => res.json())
     .then(data => {
         console.log(data)
+        
         return data
     }).catch( err => {
         console.log(err)
@@ -128,19 +172,27 @@ function startPrompt () {
         ]
     ).then(res => {
         const choice = res.startChoice
-        console.log(choice)
+        
         if (choice == "departments") {
-            console.log("weeeeeeee")
-            fetchCall(choice)
-            addPrompt()
+            
+             fetchCall(choice)
+             
+            // inquirer.prompt([
+            //    { type:"list",
+            //     message: "Here are your departments:",
+            //     choices: [newArr],
+            //     name:"startChoice"}
+            // ])
+           
+            // addPrompt()
         } else if(choice == "roles") {
-            console.log(choice)
+            
             fetchCall(choice)
-            addPrompt()
+            // addPrompt()
         } else {
-            console.log(choice)
+            
             fetchCall(choice)
-            addPrompt()
+            // addPrompt()
         }
     })
 }

@@ -13,6 +13,7 @@ router.post('/', async (req, res) => {
     const data = await employee.create({
        first_name: req.body.first_name,
         last_name: req.body.last_name,
+        role_id: req.body.role_id
         
     })
  
@@ -26,21 +27,25 @@ router.post('/seeds', async (req, res) => {
         {
             first_name:"Bob",
             last_name:"Howard",
+            role_id: 1
             
         },
         {
             first_name:"John",
             last_name:"Howard",
+            role_id: 2
             
         },
         {
             first_name:"Bill",
             last_name:"Howard",
+            role_id: 3
             
         },
         {
             first_name:"Joanna",
             last_name:"Howard",
+            role_id: 4
            
         }
 

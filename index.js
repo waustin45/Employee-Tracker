@@ -1,52 +1,13 @@
 const inquirer = require("inquirer")
 const fs = require('fs');
 const newArr = ["exit"]
+let departments;
 function fetchCall (choice) {
     fetch(`http://localhost:3001/api/${choice}`, {method: 'GET'})
     .then(res => res.json())
     .then(data => {
         
-        
-        if (choice == "departments") {
-             data.map(info => {
-            return newArr.push(info.name)
-            })
-            
-            inquirer.prompt([
-                {   type:"list",
-                    message: "Here are your departments:",
-                    choices: newArr,
-                    name:"startChoice"
-                }
-            ])
-        
-        } else if (choice == "employees") {
-            data.map(info => {
-           return newArr.push(info.first_name + " " + info.last_name)
-           })
-           
-           inquirer.prompt([
-               {   type:"list",
-                   message: "Here are your employees:",
-                   choices: newArr,
-                   name:"startChoice"
-               }
-           ])
-       
-       } else {
-        data.map(info => {
-            return newArr.push(info.title)
-            })
-            
-            inquirer.prompt([
-                {   type:"list",
-                    message: "Here are your roles:",
-                    choices: newArr,
-                    name:"startChoice"
-                }
-            ])
-        }
-        
+        console.table(data)
         return newArr
     }).catch( err => {
         console.log(err)
@@ -95,11 +56,17 @@ function rolePrompt (dep) {
                 message: "What is the role salary?",
                 name:"role2Choice"
             },
+            {
+                type:"input",
+                message: "What is the Department ID?",
+                name:"role3Choice"
+            },
         ]
     ).then(res => {
         const input = {
            title: res.roleChoice,
-           salary: res.role2Choice
+           salary: res.role2Choice,
+           department_id: res.role3Choice
         }
         console.log(input)
         fetchPost(dep, input)
@@ -118,11 +85,17 @@ function employeePrompt (dep) {
                 message: "What is the employee's last name?",
                 name:"lNameChoice"
             },
+            {
+                type:"input",
+                message: "What is the role ID?",
+                name:"TwoNameChoice"
+            },
         ]
     ).then(res => {
         const input = {
            first_name: res.fNameChoice,
-           last_name: res.lNameChoice
+           last_name: res.lNameChoice,
+           role_id: res.TwoNameChoice
         }
         console.log(input)
         fetchPost(dep, input)
@@ -170,29 +143,60 @@ function startPrompt () {
 
             }
         ]
-    ).then(res => {
+    ).then( async (res) => {
         const choice = res.startChoice
         
         if (choice == "departments") {
             
              fetchCall(choice)
              
-            // inquirer.prompt([
-            //    { type:"list",
-            //     message: "Here are your departments:",
-            //     choices: [newArr],
-            //     name:"startChoice"}
-            // ])
+           await inquirer.prompt([
+               { type:"list",
+                message: "Would you like to add a Department?",
+                choices: ["Yes", "No"],
+                name:"iffChoice"}
+            ]).then(sec => {
+                const iff = sec.iffChoice
+                if (iff == "Yes") {
+                    departmentPrompt(choice)
+                } else {
+                    return
+                }
+            })
            
-            // addPrompt()
+           
         } else if(choice == "roles") {
             
             fetchCall(choice)
-            // addPrompt()
+           await inquirer.prompt([
+                { type:"list",
+                 message: "Would you like to add a Role?",
+                 choices: ["Yes", "No"],
+                 name:"iffChoice"}
+             ]).then(sec => {
+                 const iff = sec.iffChoice
+                 if (iff == "Yes") {
+                     rolePrompt(choice)
+                 } else {
+                     return
+                 }
+             })
         } else {
             
             fetchCall(choice)
-            // addPrompt()
+           await inquirer.prompt([
+                { type:"list",
+                 message: "Would you like to add an Employee?",
+                 choices: ["Yes", "No"],
+                 name:"iffChoice"}
+             ]).then(sec => {
+                 const iff = sec.iffChoice
+                 if (iff == "Yes") {
+                     employeePrompt(choice)
+                 } else {
+                     return
+                 }
+             })
         }
     })
 }

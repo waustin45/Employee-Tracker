@@ -5,9 +5,18 @@ const  { role, department, employee } = require("../../models")
 
 
 router.get('/', async (req, res) => {
-   const data = await department.findAll()
-
+   const data = await department.findAll({
+    include: [
+        {
+            model: role,
+            attributes: ['department_id']
+        }
+    ], 
+    
+   })
+   
    res.json(data)
+   
 })
 router.post('/', async (req, res) => {
     const data = await department.create({
@@ -16,7 +25,17 @@ router.post('/', async (req, res) => {
  
     res.json(data)
  })
-// localhost:3001/api/employee/seed
+ router.delete('/:id', async (req, res) => {
+    
+    const data = await department.destroy({
+       where: {
+        id: req.params.id
+       } 
+    })
+ 
+    res.json(data)
+ })
+// localhost:3001/api/department/seed
 router.post('/seeds', async (req, res) => {
 
 
@@ -27,15 +46,15 @@ router.post('/seeds', async (req, res) => {
             
         },
         {
-            name:"sales",
+            name:"Marketing",
             
         },
         {
-            name:"sales",
+            name:"Accounting",
             
         },
         {
-            name:"sales",
+            name:"Engineering",
            
         }
 

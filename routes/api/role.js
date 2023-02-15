@@ -5,7 +5,14 @@ const  { role, department, employee } = require("../../models")
 
 
 router.get('/', async (req, res) => {
-   const data = await role.findAll()
+   const data = await role.findAll({
+    include: [
+        {
+            model: employee,
+            
+        }
+    ]
+   })
 
    res.json(data)
 })
@@ -24,23 +31,27 @@ router.post('/seeds', async (req, res) => {
 
    await role.bulkCreate([
         {
-            title:"Manager",
-            salary:10000.00,
+            title:"SalesPerson",
+            salary:75000.00,
+            department_id: 1
             
         },
         {
-            title:"Manager",
+            title:"Advertiser",
             salary:10000.00,
+            department_id: 2
             
         },
         {
-            title:"Manager",
-            salary:10000.00,
+            title:"Accountant",
+            salary:120000.00,
+            department_id: 3
             
         },
         {
-            title:"Manager",
-            salary:10000.00,
+            title:"Engineer",
+            salary:130000.00,
+            department_id: 4
            
         }
 
